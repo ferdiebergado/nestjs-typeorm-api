@@ -1,9 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  NotFoundException,
+} from "@nestjs/common";
+import { UsersService } from "./users.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { EntityNotFoundError } from "typeorm";
 
-@Controller('users')
+@Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -17,18 +27,28 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @Get(":id")
+  async findOne(@Param("id") id: string) {
+    try {
+      const user = await this.usersService.findOne(+id);
+      return user;
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) throw new NotFoundException();
+    }
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Patch(":id")
+  async update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
+    try {
+      const updated = await this.usersService.update(+id, updateUserDto);
+      return updated;
+    } catch (error) {
+      if (error instanceof EntityNotFoundError) throw new NotFoundException();
+    }
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.usersService.remove(+id);
   }
 }

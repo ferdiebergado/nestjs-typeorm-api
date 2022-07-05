@@ -17,15 +17,19 @@ export class UsersService {
   }
 
   findAll() {
-    return `This action returns all users`;
+    return this.usersRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} user`;
+    return this.usersRepository.findOneByOrFail({ id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    await this.usersRepository.findOneByOrFail({ id });
+
+    await this.usersRepository.update({ id }, updateUserDto);
+
+    return this.usersRepository.findOneBy({ id });
   }
 
   remove(id: number) {
