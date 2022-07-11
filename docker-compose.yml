@@ -4,16 +4,16 @@ services:
       dockerfile: Dockerfile
       context: .
       # Only will build development stage from our dockerfile
-      target: development
+      target: testing
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-    env_file:
-    - .env
+    # env_file:
+    # - .env
     # Run a command against the development stage of the image
-    command: npm run start:dev
+    command: npm run test:watch
     ports:
-      - 3000:3000
+      - ${APP_PORT:-3000}:3000
     networks:
       - nestjsnet
     depends_on:

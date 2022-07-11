@@ -24,6 +24,25 @@ COPY --chown=node:node . .
 # Use the node user from the image (instead of the root user)
 USER node
 
+# Run nestjs app in development mode
+# CMD ["npm", "run", "start:dev"]
+
+###################
+# BUILD FOR TESTING
+###################
+FROM development As testing
+
+USER root
+
+# Install git (needed by jest)
+RUN apk update
+RUN apk add git
+
+USER node
+
+# Run nestjs app in test mode
+#CMD ["npm", "run", "test:watch"]
+
 ###################
 # BUILD FOR PRODUCTION
 ###################
