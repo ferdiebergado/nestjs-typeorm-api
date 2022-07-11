@@ -1,30 +1,26 @@
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
+import { Exclude } from "class-transformer";
+import { BaseEntity } from "src/lib/base-entity";
+import { Column, Entity } from "typeorm";
 
-@Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+@Entity({ name: "users" })
+export class User extends BaseEntity {
   @Column({ nullable: true })
   name?: string;
 
-  @Column({ name: "email", unique: true })
+  @Column({ unique: true })
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
-  @Column({
-    name: "created_at",
-    type: "timestamptz",
-    default: () => "CURRENT_TIMESTAMP",
-  })
-  createdAt: string;
+  @Column({ name: "is_active", default: true })
+  isActive: boolean;
 
   @Column({
-    name: "updated_at",
+    name: "email_verified_at",
     type: "timestamptz",
-    default: () => "CURRENT_TIMESTAMP",
+    nullable: true,
   })
-  updatedAt: string;
+  emailVerifiedAt: string;
 }
